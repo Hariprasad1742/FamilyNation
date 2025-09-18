@@ -36,7 +36,7 @@ const Header = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   
   const handleExit = () => {
-    window.location.href = "https://www.google.com/search?q=google.com";
+    //window.location.href = com/search?q=google.com";
   };
 
   const isActive = (href: string) => location.pathname === href;
