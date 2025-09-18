@@ -24,7 +24,7 @@ function AppContent() {
                          location.pathname !== "/landing";
 
   return (
-    <div className="min-h-screen">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
       <Routes>
         <Route path="/" element={<Dashboard />} />

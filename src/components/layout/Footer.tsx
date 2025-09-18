@@ -31,10 +31,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <div className="flex items-center mb-4">
-              <div className="w-8 h-8 bg-gradient-hero rounded-lg mr-3 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">FN</span>
-              </div>
-              <h3 className="text-xl font-bold text-foreground">FamilyNation</h3>
+              <img src="/tree.jpg" alt="Logo" className="w-10 h-10 mr-3 rounded-lg object-cover" />
             </div>
             <p className="text-muted-foreground text-sm">
               Supporting families through challenges with professional guidance, 
