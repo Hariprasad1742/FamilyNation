@@ -16,26 +16,54 @@ interface HazelChatProps {
   isMemberVersion?: boolean;
 }
 
-const triageQuestions = [
+const hazelTriageQuestions = [
   {
-    question: "What kind of situation are you dealing with?",
-    options: ["Family conflict", "Mental health crisis", "Substance abuse", "Safety concern", "Other emergency"]
+    id: 'who',
+    question: "Who needs help today?",
+    type: 'buttons',
+    multiSelect: false,
+    options: ["My child", "Me", "Our family"]
   },
   {
-    question: "How urgent does this feel right now?",
-    options: ["Immediate danger", "Very urgent", "Concerning but manageable", "Need guidance soon"]
+    id: 'what',
+    question: "What’s happening? Pick all that fit.",
+    type: 'chips',
+    multiSelect: true,
+    options: ["Sibling conflict", "Screen-time battles", "Trouble at school"]
   },
   {
-    question: "Where are you located?",
-    options: ["At home", "At school", "In public", "At work", "Other location"]
+    id: 'intensity',
+    question: "How intense does it feel right now?",
+    type: 'scale',
+    multiSelect: false,
+    options: ["Calm", "Concerned", "Stressed", "Overwhelming"]
   },
   {
-    question: "What kind of help would be most useful?",
-    options: ["Professional counselor", "Crisis intervention", "Community support", "Educational resources"]
+    id: 'when',
+    question: "When can you talk to someone?",
+    type: 'chips',
+    multiSelect: true,
+    options: ["Mornings", "Afternoons", "Evenings", "Weekends"]
+  },
+  {
+    id: 'location',
+    question: "What’s your PIN/ZIP so I can search nearby licensed options?",
+    type: 'text',
+    placeholder: "Enter ZIP code"
+  },
+  {
+    id: 'preferences',
+    question: "Any preferences?",
+    type: 'chips',
+    multiSelect: true,
+    options: ["Female counselor", "Low cost", "In-person"]
   }
 ];
 
+import { useEffect, useRef } from "react";
+
 const HazelChat = ({ onComplete, isMemberVersion = false }: HazelChatProps) => {
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -43,7 +71,7 @@ const HazelChat = ({ onComplete, isMemberVersion = false }: HazelChatProps) => {
       content: isMemberVersion 
         ? "Hi, I'm Hazel. I'm here to help you find the right support and resources. Let's start with a few questions to understand your situation better."
         : "Hi, I'm Hazel. I'm here to help you right now. I'll ask a few quick questions to understand what's happening and get you the right support immediately.",
-      options: triageQuestions[0].options
+      options: hazelTriageQuestions[0].options
     }
   ]);
   
@@ -64,13 +92,13 @@ const HazelChat = ({ onComplete, isMemberVersion = false }: HazelChatProps) => {
     setMessages(prev => [...prev, userMessage]);
 
     // Check if we have more questions
-    if (currentQuestion < triageQuestions.length - 1) {
+    if (currentQuestion < hazelTriageQuestions.length - 1) {
       const nextQuestion = currentQuestion + 1;
       const botMessage: Message = {
         id: `bot-${Date.now()}`,
         type: 'bot',
-        content: triageQuestions[nextQuestion].question,
-        options: triageQuestions[nextQuestion].options
+        content: hazelTriageQuestions[nextQuestion].question,
+        options: hazelTriageQuestions[nextQuestion].options
       };
 
       setTimeout(() => {
@@ -93,6 +121,12 @@ const HazelChat = ({ onComplete, isMemberVersion = false }: HazelChatProps) => {
     }
   };
 
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
     <div className="max-w-2xl mx-auto">
       <Card className="p-6 shadow-card">
@@ -110,7 +144,7 @@ const HazelChat = ({ onComplete, isMemberVersion = false }: HazelChatProps) => {
           </div>
         </div>
 
-        <div className="space-y-4 max-h-96 overflow-y-auto">
+        <div className="space-y-4 max-h-96 overflow-y-auto" ref={chatContainerRef}>
           {messages.map((message) => (
             <div key={message.id} className={`flex gap-3 ${message.type === 'user' ? 'flex-row-reverse' : ''}`}>
               <Avatar className="w-8 h-8 flex-shrink-0">
@@ -134,21 +168,46 @@ const HazelChat = ({ onComplete, isMemberVersion = false }: HazelChatProps) => {
                   {message.content}
                 </div>
                 
-                {message.options && message.type === 'bot' && (
-                  <div className="mt-3 space-y-2">
-                    {message.options.map((option, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleOptionClick(option)}
-                        className="mr-2 mb-2 hover:bg-primary hover:text-primary-foreground transition-all"
-                      >
-                        {option}
-                      </Button>
-                    ))}
-                  </div>
-                )}
+                {message.type === 'bot' && hazelTriageQuestions[currentQuestion]?.id === 'location' && messages.filter(m => m.type === 'bot').length - 1 === messages.filter((m, idx) => m.type === 'bot' && idx <= messages.indexOf(message)).length - 1 && (
+  <form
+    className="mt-3 flex gap-2"
+    onSubmit={e => {
+      e.preventDefault();
+      const form = e.target as HTMLFormElement;
+      const input = form.elements.namedItem('zipInput') as HTMLInputElement;
+      if (input?.value) {
+        handleOptionClick(input.value);
+        input.value = '';
+      }
+    }}
+  >
+    <input
+      name="zipInput"
+      type="text"
+      placeholder={hazelTriageQuestions[currentQuestion]?.placeholder || 'Enter ZIP code'}
+      className="border rounded px-3 py-2 flex-1"
+      autoFocus
+      required
+    />
+    <Button type="submit" size="sm">Send</Button>
+  </form>
+)}
+
+{message.options && message.type === 'bot' && hazelTriageQuestions[currentQuestion]?.id !== 'location' && (
+  <div className="mt-3 space-y-2">
+    {message.options.map((option, index) => (
+      <Button
+        key={index}
+        variant="outline"
+        size="sm"
+        onClick={() => handleOptionClick(option)}
+        className="mr-2 mb-2 hover:bg-primary hover:text-primary-foreground transition-all"
+      >
+        {option}
+      </Button>
+    ))}
+  </div>
+)}
               </div>
             </div>
           ))}

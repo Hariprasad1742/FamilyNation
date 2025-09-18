@@ -26,7 +26,6 @@ function AppContent() {
   return (
     <div className="min-h-screen">
       <Header />
-      {showNavigation && <Navigation />}
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/landing" element={<Index />} />
