@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const navItems = [
   {
@@ -34,6 +34,20 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  
+  const handleMouseEnter = (label: string) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    setHoveredItem(label);
+  };
+
+  const handleMouseLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredItem(null);
+    }, 300); // 300ms delay before hiding
+  };
   
   const handleExit = () => {
     //window.location.href = com/search?q=google.com";
@@ -89,9 +103,9 @@ const Header = () => {
             {navItems.map((item) => (
               <div
                 key={item.href}
-                className="relative"
-                onMouseEnter={() => setHoveredItem(item.label)}
-                onMouseLeave={() => setHoveredItem(null)}
+                className="relative group"
+                onMouseEnter={() => handleMouseEnter(item.label)}
+                onMouseLeave={handleMouseLeave}
               >
                 <Button
                   variant={isActive(item.href) ? "default" : "ghost"}
@@ -105,7 +119,12 @@ const Header = () => {
                   )}
                 </Button>
                 {item.children.length > 0 && hoveredItem === item.label && (
-                  <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-md shadow-lg z-50 min-w-64">
+                  <div 
+                    className="absolute top-full left-0 mt-1 bg-card border border-border rounded-md shadow-lg z-50 min-w-64"
+                    onMouseEnter={() => handleMouseEnter(item.label)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div className="absolute -top-2 left-0 right-0 h-2 bg-transparent" />
                     <div className="py-2">
                       {item.children.map((child) => (
                         <button
