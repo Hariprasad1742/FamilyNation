@@ -41,6 +41,24 @@ const Header = () => {
 
   const isActive = (href: string) => location.pathname === href;
 
+  const handleNavigationWithScroll = (href: string) => {
+    const [path, hash] = href.split('#');
+    
+    // First navigate to the page
+    navigate(path);
+    
+    // Then scroll to the section if there's a hash
+    if (hash) {
+      // Wait for navigation to complete and DOM to update
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  };
+
   return (
     <header className="bg-card border-b border-border shadow-card">
       <div className="container mx-auto px-6 py-1">
@@ -78,7 +96,7 @@ const Header = () => {
                 <Button
                   variant={isActive(item.href) ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => navigate(item.href)}
+                  onClick={() => handleNavigationWithScroll(item.href)}
                   className="flex items-center gap-1 text-base font-medium"
                 >
                   {item.label}
@@ -92,7 +110,7 @@ const Header = () => {
                       {item.children.map((child) => (
                         <button
                           key={child.href}
-                          onClick={() => navigate(child.href)}
+                          onClick={() => handleNavigationWithScroll(child.href)}
                           className="block w-full text-left px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                         >
                           {child.label}
