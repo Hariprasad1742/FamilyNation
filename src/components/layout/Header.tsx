@@ -54,14 +54,16 @@ const Header = () => {
           </div>
 
           {/* Simple Exit Button */}
-          <Button 
-            variant="ghost" 
-            onClick={handleExit}
-            size="sm"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            ✕
-          </Button>
+         <Button 
+  variant="ghost" 
+  onClick={handleExit}
+  size="sm"
+  className="text-red-500 hover:text-red-700"
+>
+  ✕
+</Button>
+
+
         </div>
         {/* Navigation */}
         <div className="flex items-center justify-center">
