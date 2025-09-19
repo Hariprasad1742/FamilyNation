@@ -14,14 +14,16 @@ import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
 import Benefits from "./pages/Benefits";
 import NotFound from "./pages/NotFound";
+import Subscribe from "./pages/Subscribe";
 
 const queryClient = new QueryClient();
 
 function AppContent() {
   const location = useLocation();
-  const showNavigation = !location.pathname.startsWith("/crisis") && 
-                         !location.pathname.startsWith("/login") &&
-                         location.pathname !== "/landing";
+  const showNavigation =
+    !location.pathname.startsWith("/crisis") &&
+    !location.pathname.startsWith("/login") &&
+    location.pathname !== "/landing";
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -33,6 +35,7 @@ function AppContent() {
         <Route path="/crisis/action-plan" element={<ActionPlan />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Login />} />
+        <Route path="/subscribe" element={<Subscribe />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/about" element={<About />} />
         <Route path="/benefits" element={<Benefits />} />

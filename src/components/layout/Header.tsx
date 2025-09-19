@@ -11,8 +11,8 @@ const navItems = [
       { label: "What Does FamilyNation Do", href: "/about#what-we-do" },
       { label: "Our Vision", href: "/about#vision" },
       { label: "Our Mission", href: "/about#mission" },
-      { label: "Our Founding Hypothesis", href: "/about#hypothesis" }
-    ]
+      { label: "Our Founding Hypothesis", href: "/about#hypothesis" },
+    ],
   },
   {
     label: "What You Get",
@@ -20,14 +20,14 @@ const navItems = [
     children: [
       { label: "What Do You Get From Us?", href: "/benefits#what-you-get" },
       { label: "How Are We Different?", href: "/benefits#different" },
-      { label: "Why Us? Why Now?", href: "/benefits#why-us" }
-    ]
+      { label: "Why Us? Why Now?", href: "/benefits#why-us" },
+    ],
   },
   {
     label: "Contact Us",
     href: "/contact",
-    children: []
-  }
+    children: [],
+  },
 ];
 
 const Header = () => {
@@ -78,24 +78,29 @@ const Header = () => {
       <div className="container mx-auto px-6 py-1">
         <div className="flex items-center justify-between">
           {/* Logo/Brand */}
-          <div 
+          <div
             className="flex items-center cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <img src="/tree.jpg" alt="Logo" className="w-10 h-10 mr-3 rounded-lg object-cover" />
+            <img
+              src="/tree.jpg"
+              alt="Logo"
+              className="w-10 h-10 mr-3 rounded-lg object-cover"
+            />
+            <span className="text-3xl font-bold text-foreground mb-2 pt-3 cursor-pointer">
+              FamilyNation
+            </span>
           </div>
 
           {/* Simple Exit Button */}
-         <Button 
-  variant="ghost" 
-  onClick={handleExit}
-  size="sm"
-  className="text-red-500 hover:text-red-700"
->
-  ✕
-</Button>
-
-
+          <Button
+            variant="ghost"
+            onClick={handleExit}
+            size="sm"
+            className="text-red-500 hover:text-red-700"
+          >
+            ✕
+          </Button>
         </div>
         {/* Navigation */}
         <div className="flex items-center justify-center">
