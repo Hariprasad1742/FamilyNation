@@ -6,6 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Mail, Lock } from "lucide-react";
 
+// Simulated user database
+const mockUserDB = {
+  "b2c@example.com": { license: "B2C", subscriptionActive: false },
+  "elda@example.com": { license: "ELDA", subscriptionActive: true },
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -13,8 +19,27 @@ const Login = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // For prototype, just navigate to dashboard
-    navigate("/dashboard");
+
+    // Simulate user lookup
+    const user = mockUserDB[email.toLowerCase()];
+
+    if (!user) {
+      alert("User not found");
+      return;
+    }
+
+    // Enterprise license holders skip subscription
+    if (user.license === "ELDA") {
+      navigate("/dashboard");
+    }
+    // B2C users must have an active subscription
+    else if (user.license === "B2C") {
+      if (user.subscriptionActive) {
+        navigate("/dashboard");
+      } else {
+        navigate("/subscribe");
+      }
+    }
   };
 
   return (
@@ -22,8 +47,8 @@ const Login = () => {
       <div className="container mx-auto px-6 py-8">
         <div className="max-w-md mx-auto">
           {/* Back Button */}
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             onClick={() => navigate("/")}
             className="mb-6"
           >
@@ -83,13 +108,13 @@ const Login = () => {
               <Button variant="link" className="text-sm">
                 Forgot your password?
               </Button>
-              
+
               <div className="pt-4 border-t border-border">
                 <p className="text-sm text-muted-foreground mb-3">
                   Don't have an account?
                 </p>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => navigate("/register")}
                   className="w-full"
                 >
@@ -105,8 +130,8 @@ const Login = () => {
               <p className="text-sm text-muted-foreground mb-3">
                 Need immediate help?
               </p>
-              <Button 
-                variant="emergency" 
+              <Button
+                variant="emergency"
                 size="sm"
                 onClick={() => navigate("/crisis/triage")}
               >
