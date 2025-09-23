@@ -14,12 +14,13 @@ import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
 import Benefits from "./pages/Benefits";
 import NotFound from "./pages/NotFound";
+import { ChatProvider } from "@/context/chatContext"; // <-- import your ChatProvider
 
 const queryClient = new QueryClient();
 
 function AppContent() {
   const location = useLocation();
-  const showNavigation = !location.pathname.startsWith("/crisis") && 
+  const showNavigation = !location.pathname.startsWith("/crisis") &&
                          !location.pathname.startsWith("/login") &&
                          location.pathname !== "/landing";
 
@@ -29,8 +30,23 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/landing" element={<Index />} />
-        <Route path="/crisis/triage" element={<CrisisTriage />} />
-        <Route path="/crisis/action-plan" element={<ActionPlan />} />
+        {/* Wrap only crisis pages with ChatProvider */}
+        <Route 
+          path="/crisis/triage" 
+          element={
+            <ChatProvider>
+              <CrisisTriage />
+            </ChatProvider>
+          } 
+        />
+        <Route 
+          path="/crisis/action-plan" 
+          element={
+            <ChatProvider>
+              <ActionPlan />
+            </ChatProvider>
+          } 
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />

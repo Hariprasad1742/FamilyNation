@@ -13,6 +13,7 @@ import {
   Clock,
   ArrowRight
 } from "lucide-react";
+import { getRecommendedProfessionals } from "@/api/actionPlanApi";
 
 interface Professional {
   name: string;
@@ -26,56 +27,31 @@ interface Professional {
 }
 
 const ActionPlan = () => {
-  const navigate = useNavigate();
+ const navigate = useNavigate();
   const [responses, setResponses] = useState<string[]>([]);
+  const [planSteps, setPlanSteps] = useState<string[]>([]);
+  const [professionals, setProfessionals] = useState<Professional[]>([]);
 
-  useEffect(() => {
-    const storedResponses = sessionStorage.getItem('triageResponses');
-    if (storedResponses) {
-      setResponses(JSON.parse(storedResponses));
-    } else {
-      navigate("/crisis/triage");
-    }
-  }, [navigate]);
+useEffect(() => {
+  // Scroll to top on page load
+  window.scrollTo({ top: 0, behavior: "smooth" });
 
-  const planSteps = [
-    "Take 5 deep breaths and find a quiet space",
-    "Call one of the recommended professionals below",
-    "Consider joining our support group meeting tonight at 7 PM"
-  ];
+  const storedResponses = sessionStorage.getItem("triageResponses");
+  if (storedResponses) {
+    const respArray = JSON.parse(storedResponses);
+    setResponses(respArray);
 
-  const professionals: Professional[] = [
-    {
-      name: "Dr. Sarah Chen",
-      title: "Licensed Clinical Social Worker",
-      specialty: "Family Crisis Intervention",
-      rating: 4.9,
-      distance: "2.3 miles",
-      availability: "Available today",
-      phone: "(555) 123-4567",
-      reason: "Specializes in urgent family conflicts with 15+ years experience"
-    },
-    {
-      name: "Michael Rodriguez, LMFT",
-      title: "Licensed Marriage & Family Therapist",
-      specialty: "Crisis Counseling",
-      rating: 4.8,
-      distance: "3.1 miles",
-      availability: "Next appointment: Tomorrow 10 AM",
-      phone: "(555) 234-5678",
-      reason: "Expert in crisis de-escalation and immediate intervention strategies"
-    },
-    {
-      name: "Crisis Support Center",
-      title: "Community Mental Health Center",
-      specialty: "24/7 Crisis Support",
-      rating: 4.7,
-      distance: "4.5 miles",
-      availability: "Walk-ins accepted",
-      phone: "(555) 345-6789",
-      reason: "Immediate access to crisis counselors and emergency support services"
-    }
-  ];
+    // fetch action plan from BE
+    getRecommendedProfessionals(respArray).then((data) => {
+      setPlanSteps(data.planSteps);
+      setProfessionals(data.professionals);
+    });
+  } else {
+    navigate("/crisis/triage");
+  }
+}, [navigate]);
+
+
 
   return (
     <div className="min-h-screen bg-gradient-calm">

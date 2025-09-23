@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import HazelChat from "@/components/chat/HazelChat";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { ChatProvider } from "@/context/chatContext";
 
 const CrisisTriage = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const CrisisTriage = () => {
 
   const handleTriageComplete = (responses: string[]) => {
     // Store responses for the action plan page
-    sessionStorage.setItem('triageResponses', JSON.stringify(responses));
+    sessionStorage.setItem("triageResponses", JSON.stringify(responses));
     navigate("/crisis/action-plan");
   };
 
@@ -18,11 +19,7 @@ const CrisisTriage = () => {
     <div className="min-h-screen bg-gradient-calm">
       <div className="container mx-auto px-6 py-8">
         {/* Back Button */}
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate("/")}
-          className="mb-6"
-        >
+        <Button variant="ghost" onClick={() => navigate("/")} className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Home
         </Button>
@@ -33,14 +30,16 @@ const CrisisTriage = () => {
             Emergency Support Triage
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            I'll ask you a few quick questions to understand your situation and 
-            connect you with the right support immediately. This will take about 60 seconds.
+            I'll ask you a few quick questions to understand your situation and
+            connect you with the right support immediately. This will take about
+            60 seconds.
           </p>
         </div>
 
         {/* Chat Interface */}
-        <HazelChat onComplete={handleTriageComplete} isMemberVersion={false} />
-
+        <ChatProvider onComplete={handleTriageComplete}>
+          <HazelChat />
+        </ChatProvider>
         {/* Crisis Resources */}
         <div className="mt-8 p-4 bg-card rounded-lg border border-border shadow-card max-w-2xl mx-auto">
           <h3 className="font-semibold text-sm text-foreground mb-2">
